@@ -1,11 +1,18 @@
+
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Basket {
 
-    private static List<String> products;
-    private static List<Integer> prices;
-    private static Map<Integer, Integer> totalPrice = new HashMap<>();
+    private  List<String> products;
+    private  List<Integer> prices;
+    private  Map<Integer, Integer> totalPrice = new HashMap<>();
 
     public Basket(List<String> products, List<Integer> prices) {
         this.products = products;
@@ -33,6 +40,17 @@ public class Basket {
         }
     }
 
+    public void saveJSon(File textFile) {
+        try (Writer writer= new FileWriter(textFile)){
+            Gson gson = new Gson();
+            Basket temp = new Basket(products, prices);
+            temp.totalPrice=this.totalPrice;
+            gson.toJson(temp,writer );
+            System.out.println("Данные сохранены");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
     public void saveTxt(File textFile) throws IOException {
         try (PrintWriter out = new PrintWriter(textFile);) {
             for (int i = 0; i < getProducts().size(); i++) {
@@ -55,7 +73,23 @@ public class Basket {
 
     }
 
-    static Basket loadFromTxtFile(File textFile) {
+
+
+    public void  loadFromJSonFile(File textFile) throws RuntimeException {
+    try (Reader reader = new FileReader(textFile)) {
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        Basket temp = gson.fromJson(reader,Basket.class);
+        this.totalPrice=temp.totalPrice;
+        System.out.println(temp);
+        System.out.println("Данные загружены");
+    } catch (Exception e) {
+
+        System.out.println("Файл не найден");;
+    }
+
+    }
+    public Basket loadFromTxtFile(File textFile) {
 
         File file = new File(textFile.toURI());
         //создаем объект FileReader для объекта File
@@ -68,7 +102,7 @@ public class Basket {
             while (line != null) {
                 System.out.println(line);
                 String[] pars = line.split(" ");
-                totalPrice.put(i, Integer.valueOf(pars[1]));
+                this.totalPrice.put(i, Integer.valueOf(pars[1]));
                 i++;
                 // считываем остальные строки в цикле
                 line = reader.readLine();
@@ -114,5 +148,6 @@ public class Basket {
                 ", totalPrice=" + totalPrice +
                 '}';
     }
+
 
 }
