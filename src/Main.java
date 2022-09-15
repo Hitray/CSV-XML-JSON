@@ -6,10 +6,12 @@ import java.util.Scanner;
 public class Main {
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
 // создание статического массива
         List<String> products = List.of("Хлеб", "Яблоки", "Молоко");
         List<Integer> prices = List.of(100, 200, 300);
+        int[] currentPrice = new int[3];
+        int[] countProduct = new int[3];
 
 
         Basket baske = new Basket(products, prices);
@@ -38,39 +40,42 @@ public class Main {
 
 
                 for (int i = 0; i < baske.getTotalPrice().size(); i++) {
-                    if (baske.getTotalPrice().get(i) != null) {
-                        sumProducts += baske.getTotalPrice().get(i) * baske.getPrices().get(i);
+                    if (baske.getTotalPrice().get(i) != null){
+                        sumProducts += baske.getTotalPrice().get(i)*baske.getPrices().get(i);
                     }
                 }
                 System.out.println(baske);
 
                 // Вывод на печать
-                baske.printCart();
-                System.out.println("Итого: " + sumProducts + " руб");
-                break;
+                    baske.printCart();
+                    System.out.println("Итого: " + sumProducts + " руб");
+                    break;
 
 
             }
             if ("load".equals(input)) {
-                baske.loadFromTxtFile(new File("test.txt"));
-                System.out.println(baske);
+                Basket.loadFromBinFile(new File("basket.bin"));
                 System.out.println("Успешно загружены ");
                 continue;
             }
-            String[] pars = input.split(" ");
-            int productNumber = Integer.parseInt(pars[0]) - 1;
-            int productCount = Integer.parseInt(pars[1]);
+                String[] pars = input.split(" ");
+                int productNumber = Integer.parseInt(pars[0]) - 1;
+                int productCount = Integer.parseInt(pars[1]);
 
 //Стоимость продукта
-            baske.addToCart(productNumber, productCount);
-            baske.saveTxt(new File("test.txt"));
+                baske.addToCart(productNumber, productCount);
+
+            baske.saveBin(new File("basket.bin"));
+            }
+
+
         }
+
+
 
 
     }
 
-
-}
 
 
 
